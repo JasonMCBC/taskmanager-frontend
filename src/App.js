@@ -1,23 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { use, useState } from 'react';
+import Login from './components/Login';
+import TaskList from './components/TaskList';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  //Verificar si hay un token guardado
+  useState(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    setIsLoggedIn(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1 style={{ textAlign: 'center' }}>TaskManager</h1>
+      
+      {isLoggedIn ? (
+        <div>
+          <button 
+            onClick={handleLogout}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              padding: '10px 20px'
+            }}
+          >
+            Logout
+          </button>
+          <TaskList />
+        </div>
+      ) : (
+        <Login onLoginSuccess={handleLoginSuccess} />
+      )}
     </div>
   );
 }
